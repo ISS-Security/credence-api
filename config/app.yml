@@ -1,0 +1,6 @@
+---
+development:
+  DB_FILENAME: app/db/store/dev.db
+
+test:
+  DB_FILENAME: app/db/store/test.db

@@ -4,9 +4,10 @@ require 'json'
 require 'sequel'
 
 module Credence
-  # Models a secret document
-  class Document < Sequel::Model
-    many_to_one :project
+  # Models a project
+  class Project < Sequel::Model
+    one_to_many :documents
+    plugin :association_dependencies, documents: :destroy
 
     plugin :timestamps
 
@@ -15,17 +16,12 @@ module Credence
       JSON(
         {
           data: {
-            type: 'document',
+            type: 'project',
             attributes: {
               id: id,
-              filename: filename,
-              relative_path: relative_path,
-              description: description,
-              content: content
+              name: name,
+              repo_url: repo_url
             }
-          },
-          included: {
-            project: project
           }
         }, options
       )
