@@ -2,6 +2,7 @@
 
 require 'roda'
 require 'econfig'
+require './app/lib/secure_db'
 
 module Credence
   # Configuration for the API
@@ -34,6 +35,8 @@ module Credence
       def self.DB # rubocop:disable Naming/MethodName
         DB
       end
+
+      SecureDB.setup(config) # Load crypto keys
     end
   end
 end

@@ -45,15 +45,13 @@ module Credence
                 new_data = JSON.parse(routing.body.read)
                 proj = Project.first(id: proj_id)
                 new_doc = proj.add_document(new_data)
+                raise 'Could not save document' unless new_doc
 
-                if new_doc
-                  response.status = 201
-                  response['Location'] = "#{@doc_route}/#{new_doc.id}"
-                  { message: 'Document saved', data: new_doc }.to_json
-                else
-                  routing.halt 400, 'Could not save document'
-                end
-
+                response.status = 201
+                response['Location'] = "#{@doc_route}/#{new_doc.id}"
+                { message: 'Document saved', data: new_doc }.to_json
+              rescue Sequel::MassAssignmentRestriction
+                routing.halt 400, { message: 'Illegal Request' }.to_json
               rescue StandardError
                 routing.halt 500, { message: 'Database error' }.to_json
               end
@@ -85,8 +83,10 @@ module Credence
             response.status = 201
             response['Location'] = "#{@proj_route}/#{new_proj.id}"
             { message: 'Project saved', data: new_proj }.to_json
+          rescue Sequel::MassAssignmentRestriction
+            routing.halt 400, { message: 'Illegal Request' }.to_json
           rescue StandardError => error
-            routing.halt 400, { message: error.message }.to_json
+            routing.halt 500, { message: error.message }.to_json
           end
         end
       end

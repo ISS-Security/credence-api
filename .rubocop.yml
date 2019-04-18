@@ -4,6 +4,8 @@ require:
 
 AllCops:
   TargetRubyVersion: 2.6
+  Exclude:
+    - _snippets/*
   
 Metrics/BlockLength:
   Enabled: true

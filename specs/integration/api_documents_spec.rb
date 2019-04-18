@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './spec_helper'
+require_relative '../spec_helper'
 
 describe 'Test Document Handling' do
   include Rack::Test::Methods
@@ -29,7 +29,7 @@ describe 'Test Document Handling' do
   it 'HAPPY: should be able to get details of a single document' do
     doc_data = DATA[:documents][1]
     proj = Credence::Project.first
-    doc = proj.add_document(doc_data).save
+    doc = proj.add_document(doc_data)
 
     get "/api/v1/projects/#{proj.id}/documents/#{doc.id}"
     _(last_response.status).must_equal 200
@@ -46,21 +46,36 @@ describe 'Test Document Handling' do
     _(last_response.status).must_equal 404
   end
 
-  it 'HAPPY: should be able to create new documents' do
-    proj = Credence::Project.first
-    doc_data = DATA[:documents][1]
+  describe 'Creating Documents' do
+    before do
+      @proj = Credence::Project.first
+      @doc_data = DATA[:documents][1]
+      @req_header = { 'CONTENT_TYPE' => 'application/json' }
+    end
 
-    req_header = { 'CONTENT_TYPE' => 'application/json' }
-    post "api/v1/projects/#{proj.id}/documents",
-         doc_data.to_json, req_header
-    _(last_response.status).must_equal 201
-    _(last_response.header['Location'].size).must_be :>, 0
+    it 'HAPPY: should be able to create new documents' do
+      req_header = { 'CONTENT_TYPE' => 'application/json' }
+      post "api/v1/projects/#{@proj.id}/documents",
+           @doc_data.to_json, req_header
+      _(last_response.status).must_equal 201
+      _(last_response.header['Location'].size).must_be :>, 0
 
-    created = JSON.parse(last_response.body)['data']['data']['attributes']
-    doc = Credence::Document.first
+      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      doc = Credence::Document.first
 
-    _(created['id']).must_equal doc.id
-    _(created['filename']).must_equal doc_data['filename']
-    _(created['description']).must_equal doc_data['description']
+      _(created['id']).must_equal doc.id
+      _(created['filename']).must_equal @doc_data['filename']
+      _(created['description']).must_equal @doc_data['description']
+    end
+
+    it 'SECURITY: should not create documents with mass assignment' do
+      bad_data = @doc_data.clone
+      bad_data['created_at'] = '1900-01-01'
+      post "api/v1/projects/#{@proj.id}/documents",
+           bad_data.to_json, @req_header
+
+      _(last_response.status).must_equal 400
+      _(last_response.header['Location']).must_be_nil
+    end
   end
 end

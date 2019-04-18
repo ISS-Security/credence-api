@@ -1,1 +1,3 @@
+config/secrets.yml
 app/db/store/*
+_*
