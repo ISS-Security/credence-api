@@ -14,6 +14,8 @@ module Credence
     Econfig.root = '.'
 
     configure :development, :test do
+      require 'pry' # allow binding.pry breakpoints
+
       # Allows running reload! in pry to restart entire app
       def self.reload!
         exec 'pry -r ./specs/test_load_all'

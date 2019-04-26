@@ -7,10 +7,12 @@ API to store and retrieve confidential development files (configuration, credent
 All routes return Json
 
 - GET  `/`: Root route shows if Web API is running
+- GET  `api/v1/accounts/[username]`: Get account details
+- POST  `api/v1/accounts`: Create a new project
 - GET  `api/v1/projects/[proj_id]/documents/[doc_id]`: Get a document
 - GET  `api/v1/projects/[proj_id]/documents`: Get list of documents for project
-- POST `api/v1/projects/[ID]/documents`: Upload document for a project
-- GET  `api/v1/projects/[ID]`: Get information about a project
+- POST `api/v1/projects/[proj_id]/documents`: Upload document for a project
+- GET  `api/v1/projects/[proj_]`: Get information about a project
 - GET  `api/v1/projects`: Get list of all projects
 - POST `api/v1/projects`: Create new project
 
@@ -28,14 +30,6 @@ Setup development database once:
 rake db:migrate
 ```
 
-## Execute
-
-Run this API using:
-
-```shell
-rackup
-```
-
 ## Test
 
 Setup test database once:
@@ -50,9 +44,25 @@ Run the test specification script in `Rakefile`:
 rake spec
 ```
 
+## Develop/Debug
+
+Add fake data to the development database to work on this project:
+
+```bash
+rake db:seed
+```
+
+## Execute
+
+Launch the API using:
+
+```shell
+rackup
+```
+
 ## Release check
 
-Before submitting pull requests, please check if specs, style, and dependency audits pass:
+Before submitting pull requests, please check if specs, style, and dependency audits pass (will need to be online to update dependency database):
 
 ```shell
 rake release?

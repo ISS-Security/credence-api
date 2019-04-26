@@ -1,0 +1,8 @@
+---
+  - proj_name: Data Project
+    collaborator_email:
+      - furen@nthu.edu.tw
+      - galit@gmail.com
+  - proj_name: Config Project
+    collaborator_email:
+      - galit@gmail.com

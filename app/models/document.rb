@@ -9,7 +9,8 @@ module Credence
     many_to_one :project
 
     plugin :uuid, field: :id
-    plugin :timestamps
+    plugin :timestamps, update_on_create: true
+
     plugin :whitelist_security
     set_allowed_columns :filename, :relative_path, :description, :content
 

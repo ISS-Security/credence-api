@@ -1,0 +1,6 @@
+---
+- name: Data Project
+  repo_url: http://github.com/iss/dataproj.git
+- name: Config Project
+  repo_url: http://github.com/nthu/confproj.git
+- name: Other Project
