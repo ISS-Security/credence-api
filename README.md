@@ -57,7 +57,7 @@ rake db:seed
 Launch the API using:
 
 ```shell
-rackup
+rake run:dev
 ```
 
 ## Release check

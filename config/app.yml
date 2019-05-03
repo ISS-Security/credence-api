@@ -1,6 +1,11 @@
 ---
 development:
   DB_FILENAME: app/db/store/dev.db
+  SECURE_SCHEME: HTTP
 
 test:
   DB_FILENAME: app/db/store/test.db
+  SECURE_SCHEME: HTTP
+
+production:
+  SECURE_SCHEME: HTTPS

@@ -22,8 +22,11 @@ describe 'Test Document Handling' do
     get "api/v1/projects/#{proj.id}/documents"
     _(last_response.status).must_equal 200
 
-    result = JSON.parse last_response.body
-    _(result['data'].count).must_equal 4
+    result = JSON.parse(last_response.body)['data']
+    _(result.count).must_equal 4
+    result.each do |doc|
+      _(doc['type']).must_equal 'document'
+    end
   end
 
   it 'HAPPY: should be able to get details of a single document' do
@@ -35,8 +38,8 @@ describe 'Test Document Handling' do
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data']['attributes']['id']).must_equal doc.id
-    _(result['data']['attributes']['filename']).must_equal doc_data['filename']
+    _(result['attributes']['id']).must_equal doc.id
+    _(result['attributes']['filename']).must_equal doc_data['filename']
   end
 
   it 'SAD: should return error if unknown document requested' do
@@ -60,7 +63,7 @@ describe 'Test Document Handling' do
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      created = JSON.parse(last_response.body)['data']['attributes']
       doc = Credence::Document.first
 
       _(created['id']).must_equal doc.id

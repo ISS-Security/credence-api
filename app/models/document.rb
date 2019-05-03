@@ -35,17 +35,15 @@ module Credence
     def to_json(options = {})
       JSON(
         {
-          data: {
-            type: 'document',
-            attributes: {
-              id: id,
-              filename: filename,
-              relative_path: relative_path,
-              description: description,
-              content: content
-            }
+          type: 'document',
+          attributes: {
+            id: id,
+            filename: filename,
+            relative_path: relative_path,
+            description: description,
+            content: content
           },
-          included: {
+          include: {
             project: project
           }
         }, options

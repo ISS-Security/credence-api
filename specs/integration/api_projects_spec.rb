@@ -30,8 +30,8 @@ describe 'Test Project Handling' do
       _(last_response.status).must_equal 200
 
       result = JSON.parse last_response.body
-      _(result['data']['attributes']['id']).must_equal id
-      _(result['data']['attributes']['name']).must_equal existing_proj['name']
+      _(result['attributes']['id']).must_equal id
+      _(result['attributes']['name']).must_equal existing_proj['name']
     end
 
     it 'SAD: should return error if unknown project requested' do
@@ -62,7 +62,7 @@ describe 'Test Project Handling' do
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      created = JSON.parse(last_response.body)['data']['attributes']
       proj = Credence::Project.first
 
       _(created['id']).must_equal proj.id
