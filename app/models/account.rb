@@ -8,12 +8,14 @@ module Credence
   # Models a registered account
   class Account < Sequel::Model
     one_to_many :owned_projects, class: :'Credence::Project', key: :owner_id
-    plugin :association_dependencies, owned_projects: :destroy
-
     many_to_many :collaborations,
                  class: :'Credence::Project',
                  join_table: :accounts_projects,
                  left_key: :collaborator_id, right_key: :project_id
+
+    plugin :association_dependencies,
+           owned_projects: :destroy,
+           collaborations: :nullify
 
     plugin :whitelist_security
     set_allowed_columns :username, :email, :password
