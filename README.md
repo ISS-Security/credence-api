@@ -8,7 +8,7 @@ All routes return Json
 
 - GET  `/`: Root route shows if Web API is running
 - GET  `api/v1/accounts/[username]`: Get account details
-- POST  `api/v1/accounts`: Create a new project
+- POST  `api/v1/accounts`: Create a new acounts
 - GET  `api/v1/projects/[proj_id]/documents/[doc_id]`: Get a document
 - GET  `api/v1/projects/[proj_id]/documents`: Get list of documents for project
 - POST `api/v1/projects/[proj_id]/documents`: Upload document for a project

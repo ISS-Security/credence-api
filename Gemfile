@@ -19,9 +19,14 @@ gem 'pry'
 # Database
 gem 'hirb'
 gem 'sequel'
+
 group :development, :test do
   gem 'sequel-seed'
   gem 'sqlite3'
+end
+
+group :production do
+  gem 'pg'
 end
 
 # Security
