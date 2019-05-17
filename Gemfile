@@ -15,10 +15,14 @@ gem 'rake'
 
 # Debugging
 gem 'pry'
+gem 'rack-test'
 
 # Database
 gem 'hirb'
 gem 'sequel'
+
+# External Services
+gem 'http'
 
 group :development, :test do
   gem 'sequel-seed'
@@ -46,6 +50,5 @@ group :development do
 end
 
 group :development, :test do
-  gem 'rack-test'
   gem 'rerun'
 end
