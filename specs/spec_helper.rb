@@ -14,6 +14,15 @@ def wipe_database
   Credence::Account.map(&:destroy)
 end
 
+def auth_header(account_data)
+  auth = Credence::AuthenticateAccount.call(
+    username: account_data['username'],
+    password: account_data['password']
+  )
+
+  "Bearer #{auth[:attributes][:auth_token]}"
+end
+
 DATA = {} # rubocop:disable Style/MutableConstant
 DATA[:accounts] = YAML.load File.read('app/db/seeds/accounts_seed.yml')
 DATA[:documents] = YAML.load File.read('app/db/seeds/documents_seed.yml')

@@ -6,15 +6,16 @@ describe 'Test Account Handling' do
   include Rack::Test::Methods
 
   before do
-    @req_header = { 'CONTENT_TYPE' => 'application/json' }
+    header 'CONTENT_TYPE', 'application/json'
     wipe_database
   end
 
   describe 'Account information' do
     it 'HAPPY: should be able to get details of a single account' do
-      account_data = DATA[:accounts][1]
+      account_data = DATA[:accounts][0]
       account = Credence::Account.create(account_data)
 
+      header 'AUTHORIZATION', auth_header(account_data)
       get "/api/v1/accounts/#{account.username}"
       _(last_response.status).must_equal 200
 
@@ -32,7 +33,7 @@ describe 'Test Account Handling' do
     end
 
     it 'HAPPY: should be able to create new accounts' do
-      post 'api/v1/accounts', @account_data.to_json, @req_header
+      post 'api/v1/accounts', @account_data.to_json
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
@@ -48,7 +49,7 @@ describe 'Test Account Handling' do
     it 'BAD: should not create account with illegal attributes' do
       bad_data = @account_data.clone
       bad_data['created_at'] = '1900-01-01'
-      post 'api/v1/accounts', bad_data.to_json, @req_header
+      post 'api/v1/accounts', bad_data.to_json
 
       _(last_response.status).must_equal 400
       _(last_response.header['Location']).must_be_nil

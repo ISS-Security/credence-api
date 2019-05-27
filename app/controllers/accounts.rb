@@ -12,10 +12,15 @@ module Credence
       routing.on String do |username|
         # GET api/v1/accounts/[username]
         routing.get do
-          account = Account.first(username: username)
-          account ? account.to_json : raise('Account not found')
-        rescue StandardError => e
+          account = GetAccountQuery.call(
+            requestor: @auth_account, username: username
+          )
+          account.to_json
+        rescue GetAccountQuery::ForbiddenError => e
           routing.halt 404, { message: e.message }.to_json
+        rescue StandardError => e
+          puts "GET ACCOUNT ERROR: #{e.inspect}"
+          routing.halt 500, { message: 'API Server Error' }.to_json
         end
       end
 

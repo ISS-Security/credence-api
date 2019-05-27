@@ -8,8 +8,6 @@ module Credence
     # Error for invalid registration details
     class InvalidRegistration < StandardError; end
 
-    SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
-
     def initialize(config, registration)
       @config = config
       @registration = registration
@@ -45,7 +43,7 @@ module Credence
       HTTP.auth(
         "Bearer #{@config.SENDGRID_API_KEY}"
       ).post(
-        SENDGRID_URL,
+        @config.SENDGRID_URL,
         json: {
           personalizations: [{
             to: [{ 'email' => @registration[:email] }]

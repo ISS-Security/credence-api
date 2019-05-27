@@ -2,7 +2,7 @@
 
 require_relative '../spec_helper'
 
-describe 'Test AddCollaboratorToProject service' do
+describe 'Test AddCollaborator service' do
   before do
     wipe_database
 
@@ -20,9 +20,10 @@ describe 'Test AddCollaboratorToProject service' do
   end
 
   it 'HAPPY: should be able to add a collaborator to a project' do
-    Credence::AddCollaboratorToProject.call(
-      email: @collaborator.email,
-      project_id: @project.id
+    Credence::AddCollaborator.call(
+      account: @owner,
+      project: @project,
+      collab_email: @collaborator.email
     )
 
     _(@collaborator.projects.count).must_equal 1
@@ -31,10 +32,11 @@ describe 'Test AddCollaboratorToProject service' do
 
   it 'BAD: should not add owner as a collaborator' do
     proc {
-      Credence::AddCollaboratorToProject.call(
-        email: @owner.email,
-        project_id: @project.id
+      Credence::AddCollaborator.call(
+        account: @owner,
+        project: @project,
+        collab_email: @owner.email
       )
-    }.must_raise Credence::AddCollaboratorToProject::OwnerNotCollaboratorError
+    }.must_raise Credence::AddCollaborator::ForbiddenError
   end
 end

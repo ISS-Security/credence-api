@@ -8,58 +8,76 @@ describe 'Test Document Handling' do
   before do
     wipe_database
 
-    DATA[:projects].each do |project_data|
-      Credence::Project.create(project_data)
-    end
+    @account_data = DATA[:accounts][0]
+    @wrong_account_data = DATA[:accounts][1]
+
+    @account = Credence::Account.create(@account_data)
+    @account.add_owned_project(DATA[:projects][0])
+    @account.add_owned_project(DATA[:projects][1])
+    Credence::Account.create(@wrong_account_data)
+
+    header 'CONTENT_TYPE', 'application/json'
   end
 
-  it 'HAPPY: should be able to get list of all documents' do
-    proj = Credence::Project.first
-    DATA[:documents].each do |doc|
-      proj.add_document(doc)
+  describe 'Getting a single document' do
+    it 'HAPPY: should be able to get details of a single document' do
+      doc_data = DATA[:documents][0]
+      proj = @account.projects.first
+      doc = proj.add_document(doc_data)
+
+      header 'AUTHORIZATION', auth_header(@account_data)
+      get "/api/v1/documents/#{doc.id}"
+      _(last_response.status).must_equal 200
+
+      result = JSON.parse(last_response.body)['data']
+      _(result['attributes']['id']).must_equal doc.id
+      _(result['attributes']['filename']).must_equal doc_data['filename']
     end
 
-    get "api/v1/projects/#{proj.id}/documents"
-    _(last_response.status).must_equal 200
+    it 'SAD AUTHORIZATION: should not get details without authorization' do
+      doc_data = DATA[:documents][1]
+      proj = Credence::Project.first
+      doc = proj.add_document(doc_data)
 
-    result = JSON.parse(last_response.body)['data']
-    _(result.count).must_equal 4
-    result.each do |doc|
-      _(doc['type']).must_equal 'document'
+      get "/api/v1/documents/#{doc.id}"
+
+      result = JSON.parse last_response.body
+
+      _(last_response.status).must_equal 403
+      _(result['attributes']).must_be_nil
     end
-  end
 
-  it 'HAPPY: should be able to get details of a single document' do
-    doc_data = DATA[:documents][1]
-    proj = Credence::Project.first
-    doc = proj.add_document(doc_data)
+    it 'BAD AUTHORIZATION: should not get details with wrong authorization' do
+      doc_data = DATA[:documents][0]
+      proj = @account.projects.first
+      doc = proj.add_document(doc_data)
 
-    get "/api/v1/projects/#{proj.id}/documents/#{doc.id}"
-    _(last_response.status).must_equal 200
+      header 'AUTHORIZATION', auth_header(@wrong_account_data)
+      get "/api/v1/documents/#{doc.id}"
 
-    result = JSON.parse last_response.body
-    _(result['attributes']['id']).must_equal doc.id
-    _(result['attributes']['filename']).must_equal doc_data['filename']
-  end
+      result = JSON.parse last_response.body
 
-  it 'SAD: should return error if unknown document requested' do
-    proj = Credence::Project.first
-    get "/api/v1/projects/#{proj.id}/documents/foobar"
+      _(last_response.status).must_equal 403
+      _(result['attributes']).must_be_nil
+    end
 
-    _(last_response.status).must_equal 404
+    it 'SAD: should return error if document does not exist' do
+      header 'AUTHORIZATION', auth_header(@account_data)
+      get '/api/v1/documents/foobar'
+
+      _(last_response.status).must_equal 404
+    end
   end
 
   describe 'Creating Documents' do
     before do
       @proj = Credence::Project.first
       @doc_data = DATA[:documents][1]
-      @req_header = { 'CONTENT_TYPE' => 'application/json' }
     end
 
-    it 'HAPPY: should be able to create new documents' do
-      req_header = { 'CONTENT_TYPE' => 'application/json' }
-      post "api/v1/projects/#{@proj.id}/documents",
-           @doc_data.to_json, req_header
+    it 'HAPPY: should be able to create when everything correct' do
+      header 'AUTHORIZATION', auth_header(@account_data)
+      post "api/v1/projects/#{@proj.id}/documents", @doc_data.to_json
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
@@ -71,14 +89,37 @@ describe 'Test Document Handling' do
       _(created['description']).must_equal @doc_data['description']
     end
 
-    it 'SECURITY: should not create documents with mass assignment' do
+    it 'BAD AUTHORIZATION: should not create with incorrect authorization' do
+      header 'AUTHORIZATION', auth_header(@wrong_account_data)
+      post "api/v1/projects/#{@proj.id}/documents", @doc_data.to_json
+
+      data = JSON.parse(last_response.body)['data']
+
+      _(last_response.status).must_equal 403
+      _(last_response.header['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+
+    it 'SAD AUTHORIZATION: should not create without any authorization' do
+      post "api/v1/projects/#{@proj.id}/documents", @doc_data.to_json
+
+      data = JSON.parse(last_response.body)['data']
+
+      _(last_response.status).must_equal 403
+      _(last_response.header['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+
+    it 'BAD VULNERABILITY: should not create with mass assignment' do
       bad_data = @doc_data.clone
       bad_data['created_at'] = '1900-01-01'
-      post "api/v1/projects/#{@proj.id}/documents",
-           bad_data.to_json, @req_header
+      header 'AUTHORIZATION', auth_header(@account_data)
+      post "api/v1/projects/#{@proj.id}/documents", bad_data.to_json
 
+      data = JSON.parse(last_response.body)['data']
       _(last_response.status).must_equal 400
       _(last_response.header['Location']).must_be_nil
+      _(data).must_be_nil
     end
   end
 end
