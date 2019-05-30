@@ -29,9 +29,7 @@ def create_owned_projects
     account = Credence::Account.first(username: owner['username'])
     owner['proj_name'].each do |proj_name|
       proj_data = PROJ_INFO.find { |proj| proj['name'] == proj_name }
-      Credence::CreateProjectForOwner.call(
-        owner_id: account.id, project_data: proj_data
-      )
+      account.add_owned_project(proj_data)
     end
   end
 end

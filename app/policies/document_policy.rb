@@ -2,21 +2,22 @@
 
 # Policy to determine if account can view a project
 class DocumentPolicy
-  def initialize(account, document)
+  def initialize(account, document, auth_scope = nil)
     @account = account
     @document = document
+    @auth_scope = auth_scope
   end
 
   def can_view?
-    account_owns_project? || account_collaborates_on_project?
+    can_read? && (account_owns_project? || account_collaborates_on_project?)
   end
 
   def can_edit?
-    account_owns_project? || account_collaborates_on_project?
+    can_write? && (account_owns_project? || account_collaborates_on_project?)
   end
 
   def can_delete?
-    account_owns_project? || account_collaborates_on_project?
+    can_write? && (account_owns_project? || account_collaborates_on_project?)
   end
 
   def summary
@@ -28,6 +29,14 @@ class DocumentPolicy
   end
 
   private
+
+  def can_read?
+    @auth_scope ? @auth_scope.can_read?('documents') : false
+  end
+
+  def can_write?
+    @auth_scope ? @auth_scope.can_write?('documents') : false
+  end
 
   def account_owns_project?
     @document.project.owner == @account

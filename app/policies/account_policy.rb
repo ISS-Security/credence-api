@@ -2,8 +2,8 @@
 
 # Policy to determine if account can view a project
 class AccountPolicy
-  def initialize(requestor, account)
-    @requestor = requestor
+  def initialize(request_account, account)
+    @request_account = request_account
     @account = account
   end
 
@@ -30,6 +30,6 @@ class AccountPolicy
   private
 
   def self_request?
-    @requestor == @account
+    @request_account == @account
   end
 end

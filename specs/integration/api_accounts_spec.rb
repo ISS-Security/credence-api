@@ -19,11 +19,13 @@ describe 'Test Account Handling' do
       get "/api/v1/accounts/#{account.username}"
       _(last_response.status).must_equal 200
 
-      attributes = JSON.parse(last_response.body)['attributes']
-      _(attributes['username']).must_equal account.username
-      _(attributes['salt']).must_be_nil
-      _(attributes['password']).must_be_nil
-      _(attributes['password_hash']).must_be_nil
+      result = JSON.parse(last_response.body)['data']['attributes']
+      account_data = result['account']['attributes']
+      _(account_data['username']).must_equal account.username
+      _(account_data['salt']).must_be_nil
+      _(account_data['password']).must_be_nil
+      _(account_data['password_hash']).must_be_nil
+      _(result['auth_token']).wont_be_nil
     end
   end
 

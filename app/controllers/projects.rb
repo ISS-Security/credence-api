@@ -7,8 +7,7 @@ module Credence
   # Web controller for Credence API
   class Api < Roda
     route('projects') do |routing|
-      unauthorized_message = { message: 'Unauthorized Request' }.to_json
-      routing.halt(403, unauthorized_message) unless @auth_account
+      routing.halt(403, UNAUTH_MSG) unless @auth_account
 
       @proj_route = "#{@api_root}/projects"
       routing.on String do |proj_id|
@@ -16,9 +15,7 @@ module Credence
 
         # GET api/v1/projects/[ID]
         routing.get do
-          project = GetProjectQuery.call(
-            account: @auth_account, project: @req_project
-          )
+          project = GetProjectQuery.call(auth: @auth, project: @req_project)
 
           { data: project }.to_json
         rescue GetProjectQuery::ForbiddenError => e
@@ -34,7 +31,7 @@ module Credence
           # POST api/v1/projects/[proj_id]/documents
           routing.post do
             new_document = CreateDocument.call(
-              account: @auth_account,
+              auth: @auth,
               project: @req_project,
               document_data: JSON.parse(routing.body.read)
             )
@@ -58,7 +55,7 @@ module Credence
             req_data = JSON.parse(routing.body.read)
 
             collaborator = AddCollaborator.call(
-              account: @auth_account,
+              auth: @auth,
               project: @req_project,
               collab_email: req_data['email']
             )
@@ -74,7 +71,7 @@ module Credence
           routing.delete do
             req_data = JSON.parse(routing.body.read)
             collaborator = RemoveCollaborator.call(
-              req_username: @auth_account.username,
+              auth: @auth,
               collab_email: req_data['email'],
               project_id: proj_id
             )
@@ -102,13 +99,18 @@ module Credence
         # POST api/v1/projects
         routing.post do
           new_data = JSON.parse(routing.body.read)
-          new_proj = @auth_account.add_owned_project(new_data)
+
+          new_proj = CreateProjectForOwner.call(
+            auth: @auth, project_data: new_data
+          )
 
           response.status = 201
           response['Location'] = "#{@proj_route}/#{new_proj.id}"
           { message: 'Project saved', data: new_proj }.to_json
         rescue Sequel::MassAssignmentRestriction
           routing.halt 400, { message: 'Illegal Request' }.to_json
+        rescue CreateProjectForOwner::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
         rescue StandardError
           routing.halt 500, { message: 'API server error' }.to_json
         end

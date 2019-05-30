@@ -18,7 +18,7 @@ module Credence
 
         routing.get do
           document = GetDocumentQuery.call(
-            requestor: @auth_account, document: @req_document
+            auth: @auth, document: @req_document
           )
 
           { data: document }.to_json

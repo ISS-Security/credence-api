@@ -17,14 +17,10 @@ module Credence
       end
     end
 
-    def self.call(account:, project:, document_data:)
-      policy = ProjectPolicy.new(account, project)
+    def self.call(auth:, project:, document_data:)
+      policy = ProjectPolicy.new(auth[:account], project, auth[:scope])
       raise ForbiddenError unless policy.can_add_documents?
 
-      add_document(project, document_data)
-    end
-
-    def self.add_document(project, document_data)
       project.add_document(document_data)
     rescue Sequel::MassAssignmentRestriction
       raise IllegalRequestError

@@ -34,7 +34,7 @@ describe 'Test Collaborator Handling' do
       _(added['username']).must_equal @another_account.username
     end
 
-    it 'SAD AUTHORIZATION: should not add a collaborator without authorization' do
+    it 'SAD AUTHORIZATION: should not add collaborator without authorization' do
       req_data = { email: @another_account.email }
 
       put "api/v1/projects/#{@proj.id}/collaborators", req_data.to_json

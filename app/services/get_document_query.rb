@@ -18,10 +18,10 @@ module Credence
     end
 
     # Document for given requestor account
-    def self.call(requestor:, document:)
+    def self.call(auth:, document:)
       raise NotFoundError unless document
 
-      policy = DocumentPolicy.new(requestor, document)
+      policy = DocumentPolicy.new(auth[:account], document, auth[:scope])
       raise ForbiddenError unless policy.can_view?
 
       document

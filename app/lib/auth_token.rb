@@ -20,15 +20,18 @@ class AuthToken
   class InvalidTokenError < StandardError; end
 
   # Create a token from a Hash payload
-  def self.create(payload, expiration = ONE_WEEK)
-    contents = { 'payload' => payload, 'exp' => expires(expiration) }
-    tokenize(contents)
+  def self.create(payload, scope = AuthScope.new, expiration = ONE_WEEK)
+    tokenize(
+      'payload' => payload,
+      'scope' => scope,
+      'exp' => expires(expiration)
+    )
   end
 
   # Extract data from token
-  def self.payload(token)
+  def self.contents(token)
     contents = detokenize(token)
-    expired?(contents) ? raise(ExpiredTokenError) : contents['payload']
+    expired?(contents) ? raise(ExpiredTokenError) : contents
   end
 
   # Tokenize contents or return nil if no data
