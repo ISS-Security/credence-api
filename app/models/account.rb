@@ -22,6 +22,11 @@ module Credence
 
     plugin :timestamps, update_on_create: true
 
+    def self.create_github_account(github_account)
+      create(username: github_account[:username],
+             email: github_account[:email])
+    end
+
     def projects
       owned_projects + collaborations
     end

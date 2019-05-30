@@ -8,10 +8,13 @@ GEM
       bundler (>= 1.2.0, < 3)
       thor (~> 0.18)
     coderay (1.1.2)
+    crack (0.4.3)
+      safe_yaml (~> 1.0.0)
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
     econfig (2.1.0)
     ffi (1.10.0)
+    hashdiff (0.3.9)
     hirb (0.7.3)
     http (4.1.1)
       addressable (~> 2.3)
@@ -68,6 +71,7 @@ GEM
       rubocop (>= 0.67.0)
     ruby-progressbar (1.10.0)
     ruby_dep (1.5.0)
+    safe_yaml (1.0.5)
     sequel (5.19.0)
     sequel-seed (1.0.0)
       sequel (>= 4.0)
@@ -77,6 +81,10 @@ GEM
       unf_ext
     unf_ext (0.0.7.6)
     unicode-display_width (1.5.0)
+    webmock (3.5.1)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff
 
 PLATFORMS
   ruby
@@ -103,6 +111,7 @@ DEPENDENCIES
   sequel
   sequel-seed
   sqlite3
+  webmock
 
 RUBY VERSION
    ruby 2.6.2p47
