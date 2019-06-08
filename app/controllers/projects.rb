@@ -31,8 +31,8 @@ module Credence
           # POST api/v1/projects/[proj_id]/documents
           routing.post do
             new_document = CreateDocument.call(
-              auth: @auth,
-              project: @req_project,
+              auth:          @auth,
+              project:       @req_project,
               document_data: JSON.parse(routing.body.read)
             )
 
@@ -55,8 +55,8 @@ module Credence
             req_data = JSON.parse(routing.body.read)
 
             collaborator = AddCollaborator.call(
-              auth: @auth,
-              project: @req_project,
+              auth:         @auth,
+              project:      @req_project,
               collab_email: req_data['email']
             )
 
@@ -71,13 +71,13 @@ module Credence
           routing.delete do
             req_data = JSON.parse(routing.body.read)
             collaborator = RemoveCollaborator.call(
-              auth: @auth,
+              auth:         @auth,
               collab_email: req_data['email'],
-              project_id: proj_id
+              project_id:   proj_id
             )
 
             { message: "#{collaborator.username} removed from projet",
-              data: collaborator }.to_json
+              data:    collaborator }.to_json
           rescue RemoveCollaborator::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
           rescue StandardError

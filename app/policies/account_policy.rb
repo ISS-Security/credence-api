@@ -21,8 +21,8 @@ class AccountPolicy
 
   def summary
     {
-      can_view: can_view?,
-      can_edit: can_edit?,
+      can_view:   can_view?,
+      can_edit:   can_edit?,
       can_delete: can_delete?
     }
   end

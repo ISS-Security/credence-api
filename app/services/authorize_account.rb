@@ -22,9 +22,9 @@ module Credence
 
     def self.account_and_token(account, auth_scope)
       {
-        type: 'authorized_account',
+        type:       'authorized_account',
         attributes: {
-          account: account,
+          account:    account,
           auth_token: AuthToken.create(account, auth_scope)
         }
       }

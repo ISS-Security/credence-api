@@ -22,8 +22,8 @@ describe 'Test AddCollaborator service' do
     auth = authorization(@owner_data)
 
     Credence::AddCollaborator.call(
-      auth: auth,
-      project: @project,
+      auth:         auth,
+      project:      @project,
       collab_email: @collaborator.email
     )
 
@@ -39,8 +39,8 @@ describe 'Test AddCollaborator service' do
 
     proc {
       Credence::AddCollaborator.call(
-        auth: auth,
-        project: @project,
+        auth:         auth,
+        project:      @project,
         collab_email: @owner.email
       )
     }.must_raise Credence::AddCollaborator::ForbiddenError

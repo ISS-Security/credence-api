@@ -20,7 +20,7 @@ module Credence
       account_data = contents['payload']['attributes']
 
       { account: Account.first(username: account_data['username']),
-        scope: AuthScope.new(contents['scope']) }
+        scope:   AuthScope.new(contents['scope']) }
     end
   end
 end

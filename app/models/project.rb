@@ -15,7 +15,7 @@ module Credence
 
     one_to_many :documents
     plugin :association_dependencies,
-           documents: :destroy,
+           documents:     :destroy,
            collaborators: :nullify
 
     plugin :timestamps
@@ -24,27 +24,35 @@ module Credence
 
     def to_h
       {
-        type: 'project',
-        attributes: {
-          id: id,
-          name: name,
-          repo_url: repo_url
-        }
+        type:       'project',
+        attributes: public_attributes_hash
       }
     end
 
     def full_details
-      to_h.merge(
-        relationships: {
-          owner: owner,
-          collaborators: collaborators,
-          documents: documents
-        }
-      )
+      to_h.merge(relationships: relationships_hash)
     end
 
     def to_json(options = {})
       JSON(to_h, options)
+    end
+
+    private
+
+    def public_attributes_hash
+      {
+        id:       id,
+        name:     name,
+        repo_url: repo_url
+      }
+    end
+
+    def relationships_hash
+      {
+        owner:         owner,
+        collaborators: collaborators,
+        documents:     documents
+      }
     end
   end
 end

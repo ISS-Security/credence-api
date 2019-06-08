@@ -48,15 +48,15 @@ module Credence
 
     def summary # rubocop:disable Metrics/MethodLength
       {
-        can_view: can_view?,
-        can_edit: can_edit?,
-        can_delete: can_delete?,
-        can_leave: can_leave?,
-        can_add_documents: can_add_documents?,
-        can_delete_documents: can_remove_documents?,
-        can_add_collaborators: can_add_collaborators?,
+        can_view:                 can_view?,
+        can_edit:                 can_edit?,
+        can_delete:               can_delete?,
+        can_leave:                can_leave?,
+        can_add_documents:        can_add_documents?,
+        can_delete_documents:     can_remove_documents?,
+        can_add_collaborators:    can_add_collaborators?,
         can_remove_collaborators: can_remove_collaborators?,
-        can_collaborate: can_collaborate?
+        can_collaborate:          can_collaborate?
       }
     end
 

@@ -31,24 +31,28 @@ module Credence
       self.content_secure = SecureDB.encrypt(plaintext)
     end
 
-    # rubocop:disable MethodLength
     def to_json(options = {})
       JSON(
         {
-          type: 'document',
-          attributes: {
-            id: id,
-            filename: filename,
-            relative_path: relative_path,
-            description: description,
-            content: content
-          },
-          include: {
-            project: project
-          }
+          type:       'document',
+          attributes: public_attributes_hash,
+          include:    includes_hash
         }, options
       )
     end
-    # rubocop:enable MethodLength
+
+    def public_attributes_hash
+      {
+        id:            id,
+        filename:      filename,
+        relative_path: relative_path,
+        description:   description,
+        content:       content
+      }
+    end
+
+    def includes_hash
+      { project: project }
+    end
   end
 end

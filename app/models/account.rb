@@ -24,7 +24,7 @@ module Credence
 
     def self.create_github_account(github_account)
       create(username: github_account[:username],
-             email: github_account[:email])
+             email:    github_account[:email])
     end
 
     def projects
@@ -43,13 +43,17 @@ module Credence
     def to_json(options = {})
       JSON(
         {
-          type: 'account',
-          attributes: {
-            username: username,
-            email: email
-          }
+          type:       'account',
+          attributes: public_attributes_hash
         }, options
       )
+    end
+
+    def public_attributes_hash
+      {
+        username: username,
+        email:    email
+      }
     end
   end
 end

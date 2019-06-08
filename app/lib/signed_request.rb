@@ -3,15 +3,13 @@
 require 'rbnacl'
 require 'base64'
 
-# Parses Json information as needed
+# Verifies digitally signed requests
 class SignedRequest
-  extend Securable
-
   class VerificationError < StandardError; end
 
   def initialize(config)
     @verify_key = Base64.strict_decode64(config.VERIFY_KEY)
-    @signing_key = Base64.strict_decode64(config.SIGNING_KEY)
+    @config = config # For SIGNING_KEY during tests
   end
 
   def self.generate_keypair
@@ -29,7 +27,7 @@ class SignedRequest
 
   # Signing for internal tests (should be same as client method)
   def sign(message)
-    signature = RbNaCl::SigningKey.new(@signing_key)
+    signature = RbNaCl::SigningKey.new(@config.SIGNING_KEY)
       .sign(message.to_json)
       .then { |sig| Base64.strict_encode64(sig) }
 

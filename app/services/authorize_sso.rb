@@ -17,10 +17,11 @@ module Credence
     end
 
     def get_github_account(access_token)
-      gh_response = HTTP.headers(user_agent: 'Config Secure',
-                                 authorization: "token #{access_token}",
-                                 accept: 'application/json')
-                        .get(@config.GITHUB_ACCOUNT_URL)
+      gh_response = HTTP
+        .headers(user_agent:    'Config Secure',
+                 authorization: "token #{access_token}",
+                 accept:        'application/json')
+        .get(@config.GITHUB_ACCOUNT_URL)
 
       raise unless gh_response.status == 200
 
@@ -35,9 +36,9 @@ module Credence
 
     def account_and_token(account)
       {
-        type: 'sso_account',
+        type:       'sso_account',
         attributes: {
-          account: account,
+          account:    account,
           auth_token: AuthToken.create(account)
         }
       }

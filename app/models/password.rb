@@ -19,7 +19,7 @@ module Credence
     end
 
     def to_json(options = {})
-      JSON({ salt: Base64.strict_encode64(@salt),
+      JSON({ salt:   Base64.strict_encode64(@salt),
              digest: Base64.strict_encode64(@digest) },
            options)
     end
