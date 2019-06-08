@@ -3,12 +3,15 @@ development:
   DB_FILENAME: app/db/store/dev.db
   SECURE_SCHEME: HTTP
   GITHUB_ACCOUNT_URL: https://api.github.com/user
+  SENDGRID_URL: https://api.sendgrid.com/v3/mail/send
 
 test:
   DB_FILENAME: app/db/store/test.db
   SECURE_SCHEME: HTTP
   GITHUB_ACCOUNT_URL: https://api.github.com/user
+  SENDGRID_URL: https://api.sendgrid.com/v3/mail/send
 
 production:
   SECURE_SCHEME: HTTPS
   GITHUB_ACCOUNT_URL: https://api.github.com/user
+  SENDGRID_URL: https://api.sendgrid.com/v3/mail/send

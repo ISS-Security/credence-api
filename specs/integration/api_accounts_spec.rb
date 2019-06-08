@@ -35,7 +35,8 @@ describe 'Test Account Handling' do
     end
 
     it 'HAPPY: should be able to create new accounts' do
-      post 'api/v1/accounts', @account_data.to_json
+      post 'api/v1/accounts',
+           SignedRequest.new(app.config).sign(@account_data).to_json
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
@@ -48,13 +49,20 @@ describe 'Test Account Handling' do
       _(account.password?('not_really_the_password')).must_equal false
     end
 
-    it 'BAD: should not create account with illegal attributes' do
+    it 'BAD MASS_ASSIGNMENT: should not accept illegal attributes' do
       bad_data = @account_data.clone
       bad_data['created_at'] = '1900-01-01'
-      post 'api/v1/accounts', bad_data.to_json
+      post 'api/v1/accounts',
+           SignedRequest.new(app.config).sign(bad_data).to_json
 
       _(last_response.status).must_equal 400
       _(last_response.header['Location']).must_be_nil
+    end
+
+    it 'BAD SIGNED_REQUEST: should not accept unsigned requests' do
+      post 'api/v1/accounts', @account_data.to_json
+      _(last_response.status).must_equal 403
+      _(last_response.header['Location']).must_equal nil
     end
   end
 end

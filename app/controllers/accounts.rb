@@ -28,18 +28,19 @@ module Credence
 
       # POST api/v1/accounts
       routing.post do
-        new_data = JSON.parse(routing.body.read)
-        new_account = Account.new(new_data)
-        raise('Could not save account') unless new_account.save
+        account_data = SignedRequest.new(Api.config).parse(request.body.read)
+        new_account = Account.create(account_data)
 
         response.status = 201
         response['Location'] = "#{@account_route}/#{new_account.username}"
         { message: 'Account saved', data: new_account }.to_json
       rescue Sequel::MassAssignmentRestriction
-        routing.halt 400, { message: 'Illegal Request' }.to_json
+        routing.halt 400, { message: 'Illegal Attributes' }.to_json
+      rescue SignedRequest::VerificationError
+        routing.halt 403, { message: 'Must sign request' }.to_json
       rescue StandardError => e
-        puts e.inspect
-        routing.halt 500, { message: e.message }.to_json
+        puts "ERROR CREATING ACCOUNT: #{e.inspect}"
+        routing.halt 500, { message: 'Error creating account' }.to_json
       end
     end
   end
