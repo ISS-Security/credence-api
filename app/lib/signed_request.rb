@@ -27,7 +27,8 @@ class SignedRequest
 
   # Signing for internal tests (should be same as client method)
   def sign(message)
-    signature = RbNaCl::SigningKey.new(@config.SIGNING_KEY)
+    signing_key = Base64.strict_decode64(@config.SIGNING_KEY)
+    signature = RbNaCl::SigningKey.new(signing_key)
       .sign(message.to_json)
       .then { |sig| Base64.strict_encode64(sig) }
 

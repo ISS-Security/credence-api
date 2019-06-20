@@ -1,4 +1,6 @@
 .bundle/
 config/secrets.yml
 app/db/store/*
+coverage/*
+!coverage/.resultset.json
 _*

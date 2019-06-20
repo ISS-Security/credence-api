@@ -33,7 +33,7 @@ describe 'Test Project Handling' do
         _(result['data'].count).must_equal 2
       end
 
-      it 'BAD: should not process without authorization' do
+      it 'BAD AUTHORIZATION: should not process without authorization' do
         get 'api/v1/projects'
         _(last_response.status).must_equal 403
 
@@ -72,7 +72,7 @@ describe 'Test Project Handling' do
       _(result['attributes']).must_be_nil
     end
 
-    it 'BAD SQL VULNERABILTY: should prevent basic SQL injection of id' do
+    it 'BAD SQL_INJECTION: should prevent basic SQL injection of id' do
       @account.add_owned_project(DATA[:projects][0])
       @account.add_owned_project(DATA[:projects][1])
 
@@ -105,7 +105,7 @@ describe 'Test Project Handling' do
       _(created['repo_url']).must_equal @proj_data['repo_url']
     end
 
-    it 'SAD: should not create new project without authorization' do
+    it 'SAD AUTHORIZATION: should not create project without authorization' do
       post 'api/v1/projects', @proj_data.to_json
 
       created = JSON.parse(last_response.body)['data']
@@ -115,7 +115,7 @@ describe 'Test Project Handling' do
       _(created).must_be_nil
     end
 
-    it 'SECURITY: should not create project with mass assignment' do
+    it 'BAD MASS_ASSIGNMENT: should not create project with mass assignment' do
       bad_data = @proj_data.clone
       bad_data['created_at'] = '1900-01-01'
 
