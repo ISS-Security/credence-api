@@ -5,7 +5,7 @@ ruby '2.6.2'
 
 # Web API
 gem 'json'
-gem 'puma', '~>3.11'
+gem 'puma', '~>4.3'
 gem 'rack', '>= 2.0.6'
 gem 'roda', '~>3.6'
 
