@@ -36,6 +36,7 @@ GEM
     minitest (5.11.3)
     minitest-rg (5.2.0)
       minitest (~> 5.0)
+    nio4r (2.5.7)
     parallel (1.17.0)
     parser (2.6.2.1)
       ast (~> 2.4.0)
@@ -45,7 +46,8 @@ GEM
       method_source (~> 0.9.0)
     psych (3.1.0)
     public_suffix (3.0.3)
-    puma (3.12.1)
+    puma (4.3.8)
+      nio4r (~> 2.0)
     rack (2.0.7)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -105,7 +107,7 @@ DEPENDENCIES
   minitest-rg
   pg
   pry
-  puma (~> 3.11)
+  puma (~> 4.3)
   rack (>= 2.0.6)
   rack-test
   rake
